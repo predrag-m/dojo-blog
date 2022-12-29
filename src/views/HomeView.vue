@@ -3,24 +3,39 @@ import { ref } from "vue";
 import type Post from "@/types/Post";
 import PostList from "@/components/PostList.vue";
 
-const posts = ref<Post[]>([
-  {
-    title: "Welcome to the blog",
-    body: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque dolores rem corrupti debitis maiores dolorum quaerat perspiciatis, nulla odit. Dicta tempore recusandae error, laboriosam suscipit deserunt ex dolorem id, iste cumque placeat eligendi veniam aut voluptatem hic. Perferendis harum totam ex sapiente quam? Culpa at unde totam reiciendis sed sunt officiis impedit nisi, sint magnam, reprehenderit sit, quo numquam pariatur non commodi? Ea ipsum eos aspernatur quisquam in, quae et porro nostrum laboriosam repudiandae recusandae soluta laudantium earum ad. Cupiditate molestias quod totam odio animi veritatis aliquam ipsum asperiores tempora velit? Explicabo dolore recusandae sequi vel autem nulla! Dicta, at.",
-    id: 1,
-  },
-  {
-    title: "Top 5 CSS tips",
-    body: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque dolores rem corrupti debitis maiores dolorum quaerat perspiciatis, nulla odit. Dicta tempore recusandae error, laboriosam suscipit deserunt ex dolorem id, iste cumque placeat eligendi veniam aut voluptatem hic. Perferendis harum totam ex sapiente quam? Culpa at unde totam reiciendis sed sunt officiis impedit nisi, sint magnam, reprehenderit sit, quo numquam pariatur non commodi? Ea ipsum eos aspernatur quisquam in, quae et porro nostrum laboriosam repudiandae recusandae soluta laudantium earum ad. Cupiditate molestias quod totam odio animi veritatis aliquam ipsum asperiores tempora velit? Explicabo dolore recusandae sequi vel autem nulla! Dicta, at.",
-    id: 2,
-  },
-]);
+const posts = ref<Post[]>([]);
+const errorMessage = ref<null | string>(null); // ? do i need to explicitly type a union?
+const isLoading = ref(false);
+
+// fetch the data from local3000 - activate the json-server first (see explanation iside 'data' folder)
+// setTimeout is here only for demonstration purposes - remove the line above the "try{}" and line after the 'finally{}'
+const load = async () => {
+  isLoading.value = true;
+  setTimeout(async () => {
+    try {
+      let data = await fetch("http://localhost:3000/posts");
+      if (!data.ok) throw new Error("ERROR: no data available");
+      posts.value = await data.json(); // data.json is async - it returns a promise
+    } catch (err: any) {
+      errorMessage.value = err.message;
+      // console.log(errorMessage.value);
+    } finally {
+      isLoading.value = false;
+    }
+  }, 1500);
+};
+
+load(); // temp
 </script>
 
 <template>
   <div class="home">
     <h1>This is an home page</h1>
-    <post-list :posts="posts" />
+    <div v-if="errorMessage">{{ errorMessage }}</div>
+    <div v-if="isLoading">Loading...</div>
+    <div v-else-if="posts.length">
+      <post-list :posts="posts" />
+    </div>
   </div>
 </template>
 
