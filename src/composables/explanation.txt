@@ -1,0 +1,9 @@
+We can externalize all of this logic (regarding the fetching data from local3000) into a separate function in its own file.
+And then we can just import this function in any component that needs the data.
+And invoke that function inside the setup().
+
+This way we are defining all of this logic just ONCE.
+
+These functions are called:
+    composables, or
+    composition functions.
