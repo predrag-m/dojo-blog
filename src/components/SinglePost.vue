@@ -10,14 +10,18 @@ const props = defineProps({
 });
 
 const postBodySnippet = computed(() => {
-  return props.post.body.substring(0, 100) + "...."; // returns first 100 characters of the string
+  return props.post.body.substring(0, 100) + "....";
 });
 </script>
 
 <template>
-  <div class="post"></div>
-  <h3>{{ post.title }}</h3>
-  <p>{{ postBodySnippet }}</p>
+  <div class="post">
+    <router-link :to="{ name: 'Details', params: { id: post.id } }">
+      <h3>{{ post.title }}</h3>
+    </router-link>
+    <p>{{ postBodySnippet }}</p>
+    <span v-for="(tag, index) in post.tags" :key="index"> #{{ tag }}</span>
+  </div>
 </template>
 
 <style scoped></style>

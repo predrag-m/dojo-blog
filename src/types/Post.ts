@@ -1,7 +1,8 @@
 type Post = {
+  id: number;
   title: string;
   body: string;
-  id: number;
+  tags: string[];
 };
 
 export default Post;
